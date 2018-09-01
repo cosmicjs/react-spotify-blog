@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import './App.css';
 import AppBar from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-import FeaturedPost from './FeaturedPost'
-import OtherPosts from './OtherPosts'
+import FeaturedPost from './FeaturedPost';
+import OtherPosts from './OtherPosts';
+import SpotifyContainer from './SpotifyContainer';
 
 class App extends Component {
   render() {
@@ -20,7 +21,7 @@ class App extends Component {
           <FeaturedPost></FeaturedPost>
         </div>
         <div className="spotifyPlayer">
-          <p>spotifyPlayer here</p>
+          <SpotifyContainer></SpotifyContainer>
         </div>
         <div className="otherPosts">
           <OtherPosts></OtherPosts>
