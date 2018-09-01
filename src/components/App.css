@@ -1,17 +1,21 @@
 .App {
+  margin: auto;
   text-align: center;
   display: grid;
   grid-template-columns: 2fr 1fr;
   grid-column-gap: 20px;
   grid-template-rows: 1fr 2fr 3fr 2fr 1fr;
   grid-row-gap: 20px;
+  justify-items: stretch;
+  align-items: stretch;
   height: 100vh;
+  max-width: 1600px;
 }
 
 .App-header {
   grid-column: 1/1;
-  background-color: #222;
-  color: white;
+  /*background-color: #222;*/
+  /*color: white;*/
 }
 
 .featuredPost {

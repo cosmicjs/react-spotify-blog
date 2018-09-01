@@ -1,21 +1,29 @@
 import React, { Component } from 'react';
 import './App.css';
+import AppBar from '@material-ui/core/Button';
+import Typography from '@material-ui/core/Typography';
+import FeaturedPost from './FeaturedPost'
+import OtherPosts from './OtherPosts'
 
 class App extends Component {
   render() {
     return (
       <div className="App">
         <header className="App-header">
-          <h1 className="App-title">Old School Shuffle</h1>
+          <AppBar>
+            <Typography variant="title">
+              Old School Shuffle
+            </Typography>
+          </AppBar>
         </header>
         <div className="featuredPost">
-          <p>Featured post here</p>
+          <FeaturedPost></FeaturedPost>
         </div>
         <div className="spotifyPlayer">
           <p>spotifyPlayer here</p>
         </div>
         <div className="otherPosts">
-          <p>other posts here</p>
+          <OtherPosts></OtherPosts>
         </div>
         <div className="footer">
           <p>cosmic footer here</p>
