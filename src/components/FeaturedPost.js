@@ -5,19 +5,34 @@ import Paper from '@material-ui/core/Paper';
 import Author from './Author';
 
 class FeaturedPost extends Component {
+  constructor(props) {
+    super(props);
+    console.log("props from FeaturedPost",props);
+  }
+
+  returnHtmlStringAsDomElement(htmlString) {
+    //Cosmic JS default content field is an html field
+    console.log("htmlString ",htmlString);
+    return (
+      <div>
+        {htmlString}
+      </div>
+    )
+  }
+
+  createMarkup(htmlString){
+    return {__html: htmlString}
+  }
 
   render() {
     return (
       <div className="FeaturedPost">
       <Paper>
       	<Typography variant="headline" component="h3">
-      		Post Title
+      		{this.props.post.title}
       	</Typography>
-        <Author />
-      	<div className="content">
-      	<Typography component="p">
-      		Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non diam blandit, lacinia sem eu, lobortis metus. Pellentesque consequat euismod imperdiet. Vestibulum nec sem quis turpis posuere varius. Suspendisse pulvinar magna ut blandit ornare. Maecenas pharetra leo non neque lacinia, in efficitur augue ultricies. Aliquam id velit sed nisi vehicula pharetra. Nullam ac ipsum nunc. Nunc vitae orci vitae nisl imperdiet posuere vel quis sapien. Duis orci quam, cursus ut metus non, venenatis rhoncus urna. Aenean non bibendum ligula, sit amet volutpat lorem. Curabitur et gravida orci. Phasellus tincidunt diam in mauris convallis, sit amet finibus ipsum tincidunt. Vestibulum ac magna semper, consectetur felis vel, rutrum turpis. Donec dictum aliquam luctus.
-      	</Typography>
+        <Author authorName={this.props.post.metadata.author.title} avatarImageSrc={this.props.post.metadata.author.metadata.avatarimage.url}/>
+      	<div className="content" dangerouslySetInnerHTML={this.createMarkup(this.props.post.content)}>
       	</div>
       </Paper>
       </div>

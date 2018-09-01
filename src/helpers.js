@@ -17,8 +17,10 @@ function organizeCosmicJsDataByObjectType(arrayOfCosmicJsData) {
   let organizedData = {};
   arrayOfCosmicJsData.map((object) => {
     const typeSlug = object.type_slug;
+    //eslint-disable-next-line
     organizedData.hasOwnProperty(typeSlug) ? '': organizedData[typeSlug] = [];
-    organizedData[typeSlug].push(object)
+    organizedData[typeSlug].push(object);
+    return organizedData;
   })
   return organizedData;
 }

@@ -11,17 +11,27 @@ import * as Helpers from '../helpers';
 
 class App extends Component {
 
-  // constructor(props){
-  //   super(props);
-  //   this.state = {
-
-  //   }
-    
-  // }
+  constructor(props){
+    super(props);
+    this.state = {
+       dataReceived: false,      
+       posts: [], 
+       authors: [],
+    }
+  }
 
   async componentDidMount(){
-    const data = await Helpers.getCosmicJsData();
-    console.log("data ",data);
+    try {
+      const {posts, authors} = await Helpers.getCosmicJsData();
+      console.log("posts ",posts);
+      console.log("authors ",authors);
+      this.setState({dataReceived: true, posts: posts, authors: authors})
+    }
+    catch(err) {
+      console.error('Error: Problem retrieving Cosmic JS data', err);
+      console.error(err.stack);
+      this.setState({dataReceived: false});
+    }
   }
 
   render() {
@@ -35,7 +45,7 @@ class App extends Component {
           </AppBar>
         </header>
         <div className="featuredPost">
-          <FeaturedPost />
+        {this.state.dataReceived ? <FeaturedPost post={this.state.posts[0]}/> : ''}
         </div>
         <div className="spotifyPlayer">
           <SpotifyContainer></SpotifyContainer>

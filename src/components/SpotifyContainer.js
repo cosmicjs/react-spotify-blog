@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './SpotifyContainer.css';
-import Typography from '@material-ui/core/Typography';
+// import Typography from '@material-ui/core/Typography';
 // import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 class SpotifyContainer extends Component {

@@ -9,3 +9,7 @@
 	display: flex;
 	align-items: flex-start;
 }
+
+.content {
+	padding: 10px;
+}
