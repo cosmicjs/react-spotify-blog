@@ -6,9 +6,24 @@ import FeaturedPost from './FeaturedPost';
 import OtherPosts from './OtherPosts';
 import SpotifyContainer from './SpotifyContainer';
 import Footer from './Footer';
+import * as Helpers from '../helpers';
 
 
 class App extends Component {
+
+  // constructor(props){
+  //   super(props);
+  //   this.state = {
+
+  //   }
+    
+  // }
+
+  async componentDidMount(){
+    const data = await Helpers.getCosmicJsData();
+    console.log("data ",data);
+  }
+
   render() {
     return (
       <div className="App">

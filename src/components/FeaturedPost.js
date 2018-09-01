@@ -5,6 +5,7 @@ import Paper from '@material-ui/core/Paper';
 import Author from './Author';
 
 class FeaturedPost extends Component {
+
   render() {
     return (
       <div className="FeaturedPost">
