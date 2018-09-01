@@ -5,6 +5,8 @@ import Typography from '@material-ui/core/Typography';
 import FeaturedPost from './FeaturedPost';
 import OtherPosts from './OtherPosts';
 import SpotifyContainer from './SpotifyContainer';
+import Footer from './Footer';
+
 
 class App extends Component {
   render() {
@@ -18,16 +20,16 @@ class App extends Component {
           </AppBar>
         </header>
         <div className="featuredPost">
-          <FeaturedPost></FeaturedPost>
+          <FeaturedPost />
         </div>
         <div className="spotifyPlayer">
           <SpotifyContainer></SpotifyContainer>
         </div>
         <div className="otherPosts">
-          <OtherPosts></OtherPosts>
+          <OtherPosts/>
         </div>
         <div className="footer">
-          <p>cosmic footer here</p>
+          <Footer />
         </div>
       </div>
     );

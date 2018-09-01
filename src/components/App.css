@@ -1,5 +1,7 @@
 .App {
   margin: auto;
+  padding-left: 50px;
+  padding-right: 50px;
   text-align: center;
   display: grid;
   grid-template-columns: 2fr 1fr;

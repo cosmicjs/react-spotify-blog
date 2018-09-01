@@ -1,10 +1,6 @@
 import React, { Component } from 'react';
 import './Author.css';
-import Typography from '@material-ui/core/Typography';
-import classNames from 'classnames';
 import Avatar from '@material-ui/core/Avatar'
-// import avatarImage from '../../public/logo_bellamybuffaloonly.png'
-// import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 class Author extends Component {
   render() {
