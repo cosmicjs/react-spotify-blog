@@ -6,8 +6,6 @@ import * as SpotifyFunctions from '../spotifyFunctions.js'
 
 class ConnectSpotify extends Component {
 
-//onClick={(e) => {SpotifyFunctions.getSpotifyAccessToken()}}
-
   render() {
     return (
       <div className="ConnectSpotify">
