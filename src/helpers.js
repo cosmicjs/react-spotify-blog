@@ -25,4 +25,17 @@ function organizeCosmicJsDataByObjectType(arrayOfCosmicJsData) {
   return organizedData;
 }
 
+export function matchPostObjectToPostIndex(targetPostObject, arrayOfPostObjects) {
+  //receives a target post object and the array of posts from cosmic. matches
+  //the _id of the post object and returns the index for that object
+  //in the array. Use so otherPosts can tell featuredPost which one
+  //we care about
+  let returnIndex = 0;
+  arrayOfPostObjects.map((postObject, index) => {
+    //eslint-disable-next-line
+    return targetPostObject._id === postObject._id ? returnIndex = index : '';
+  })
+  return returnIndex
+}
+
 

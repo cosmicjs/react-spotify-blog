@@ -25,8 +25,6 @@ class App extends Component {
   async componentDidMount(){
     try {
       const {posts, authors} = await Helpers.getCosmicJsData();
-      console.log("posts ",posts);
-      console.log("authors ",authors);
       this.setState({dataReceived: true, posts: posts, authors: authors, otherPosts: posts.slice(1)})
     }
     catch(err) {
@@ -42,16 +40,9 @@ class App extends Component {
     let copyOfPosts = this.state.posts.slice();
     copyOfPosts.splice(index, 1);
     // otherPosts.splice(index,1);
-    console.log("copyOfPosts from changeFeaturedPost",copyOfPosts);
     this.setState({otherPosts: copyOfPosts});
   }
 
-  nonFeaturedPosts() {
-    return (
-      this.setState()
-      // this.state.posts
-    )
-  }
 
   render() {
     return (
@@ -70,7 +61,7 @@ class App extends Component {
           <SpotifyContainer></SpotifyContainer>
         </div>
         <div className="otherPosts">
-          <OtherPosts posts={this.state.otherPosts} changeFeaturedPost={(index) => this.changeFeaturedPost(index)}/>
+          <OtherPosts allPosts={this.state.posts} otherPosts={this.state.otherPosts} changeFeaturedPost={(index) => this.changeFeaturedPost(index)}/>
         </div>
         <div className="footer">
           <Footer />
