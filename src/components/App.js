@@ -17,6 +17,8 @@ class App extends Component {
        dataReceived: false,      
        posts: [], 
        authors: [],
+       featuredPostIndex: 0,
+       otherPosts: [],
     }
   }
 
@@ -25,13 +27,30 @@ class App extends Component {
       const {posts, authors} = await Helpers.getCosmicJsData();
       console.log("posts ",posts);
       console.log("authors ",authors);
-      this.setState({dataReceived: true, posts: posts, authors: authors})
+      this.setState({dataReceived: true, posts: posts, authors: authors, otherPosts: posts.slice(1)})
     }
     catch(err) {
       console.error('Error: Problem retrieving Cosmic JS data', err);
       console.error(err.stack);
       this.setState({dataReceived: false});
     }
+  }
+
+  changeFeaturedPost(index) {
+    this.setState({featuredPostIndex: index})
+    //make copy of posts so don't mutate
+    let copyOfPosts = this.state.posts.slice();
+    copyOfPosts.splice(index, 1);
+    // otherPosts.splice(index,1);
+    console.log("copyOfPosts from changeFeaturedPost",copyOfPosts);
+    this.setState({otherPosts: copyOfPosts});
+  }
+
+  nonFeaturedPosts() {
+    return (
+      this.setState()
+      // this.state.posts
+    )
   }
 
   render() {
@@ -45,13 +64,13 @@ class App extends Component {
           </AppBar>
         </header>
         <div className="featuredPost">
-        {this.state.dataReceived ? <FeaturedPost post={this.state.posts[0]}/> : ''}
+        {this.state.dataReceived ? <FeaturedPost post={this.state.posts[this.state.featuredPostIndex]}/> : ''}
         </div>
         <div className="spotifyPlayer">
           <SpotifyContainer></SpotifyContainer>
         </div>
         <div className="otherPosts">
-          <OtherPosts/>
+          <OtherPosts posts={this.state.otherPosts} changeFeaturedPost={(index) => this.changeFeaturedPost(index)}/>
         </div>
         <div className="footer">
           <Footer />

@@ -7,27 +7,30 @@ import Typography from '@material-ui/core/Typography';
 // import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 class OtherPosts extends Component {
+
   render() {
+      console.log("this.props.posts from OtherPosts",this.props.posts);
     return (
       <div className="OtherPosts">
       <ExpansionPanel>
         <ExpansionPanelSummary>
           <Typography>Previous Posts</Typography>
         </ExpansionPanelSummary>
-        <ExpansionPanelDetails>
-          <Typography>
-            A second Post Title Here
-          </Typography>
-        </ExpansionPanelDetails>
-        <ExpansionPanelDetails>
-          <Typography>
-            A third Post Title Here
-          </Typography>
-        </ExpansionPanelDetails>
+        {this.props.posts.map((postObject, index) => {
+          return (
+            <ExpansionPanelDetails key={`otherPost-${index}`}>
+              <Typography>
+                {postObject.title}
+              </Typography>
+            </ExpansionPanelDetails>
+          )
+        })}
         </ExpansionPanel>
       </div>
     );
   }
+
 }
 
 export default OtherPosts;
+
