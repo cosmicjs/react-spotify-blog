@@ -16,6 +16,9 @@ export function redirectUrlToSpotifyForLogin(){
       '&response_type=token';
 }
 
+const spotifyApi = new Spotify();
+// spotifyApi.setPromiseImplementation(Promise);
+
 export function checkUrlForSpotifyAccessToken(){
 	const params = getHashParams();
 	const accessToken = params.access_token
@@ -35,4 +38,30 @@ function getHashParams() {
      hashParams[e[1]] = decodeURIComponent(e[2]);
   }
   return hashParams;
+}
+
+export function setAccessToken(accessToken) {
+	spotifyApi.setAccessToken(accessToken);
+}
+
+export async function getUserPlaylists(accessToken) {
+	//returns an array of objects with playlist name (like "Favorite Smashing Pumpkins jamz")
+	//and the id of the playlist. Use this to feed the playlists selection list 
+
+	try {
+		const playlistsResponse = await spotifyApi.getUserPlaylists();
+		//items are the actual playlist objects
+		const {items} = playlistsResponse;
+		const playlists = items.map((playlistObject) => {
+			const {id, name} = playlistObject;
+			return {id: id, playlistName: name}
+		})
+		return playlists
+	}
+	catch(err) {
+		//return default array with note that can't download playlists
+		console.error('Error: Attempting to get user playlists', err);
+		console.error(err.stack);
+		return [{id: null, playlistName: "Can't Download your Playlists!"}]
+	}
 }

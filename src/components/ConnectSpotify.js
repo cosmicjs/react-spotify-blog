@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import './ConnectSpotify.css';
-import Typography from '@material-ui/core/Typography';
 import * as SpotifyFunctions from '../spotifyFunctions.js'
 // import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
