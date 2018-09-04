@@ -44,9 +44,7 @@ class PlaylistChooser extends Component {
   constructor(props){
     super(props)
     this.classes = props;
-      //byAlbum or byArtist
       this.state = {
-      byAlbumOrByArtist: 'byAlbum',
       addRelatedDiscography: "false",
       playlists: [],
       chosenPlaylistIndex: 0,
@@ -54,11 +52,6 @@ class PlaylistChooser extends Component {
       chosenPlaylistId: null,
       anchorElement: null
     }
-  }
-
-  changeByAlbumOrByArtist(e){
-    e.preventDefault()
-    this.setState({byAlbumOrByArtist: e.target.value})
   }
 
   changeAddRelatedDiscography(e){
@@ -122,19 +115,6 @@ render() {
         </Menu>
         <div className={this.classes.optionsSelection}>
         <FormControl component="fieldset" className={this.classes.optionsSelection}>
-          <FormLabel component="legend">Shuffle Options</FormLabel>
-          <FormGroup>
-          <FormLabel component="legend">By Artist or by Album</FormLabel>
-          <RadioGroup
-            aria-label="By Artist or By Album"
-            name="byAlbumOrByArtist"
-            value={this.state.byAlbumOrByArtist}
-            onChange={(e) => this.changeByAlbumOrByArtist(e)}
-          >
-            <FormControlLabel value="byAlbum" control={<Radio />} label="By Album" />
-            <FormControlLabel value="byArtist" control={<Radio />} label="By Artist" />
-          </RadioGroup>
-          </FormGroup>
           <FormGroup>
           <FormLabel component="legend">Add Related Discography</FormLabel>
           <RadioGroup
@@ -149,7 +129,7 @@ render() {
           </FormGroup>
         </FormControl>
         </div>
-        <button onClick={(e) => {SpotifyFunctions.byAlbumNoDiscographyRedo(this.state)}}>Play Now</button>
+        <button onClick={(e) => {this.state.addRelatedDiscography === "false" ? SpotifyFunctions.byAlbumNoDiscography(this.state) : SpotifyFunctions.byAlbumWithDiscography(this.state)}}>Play Now</button>
       </div>
     )
   }
@@ -157,4 +137,17 @@ render() {
 
   
 export default withStyles(styles)(PlaylistChooser);
+
+          // <FormGroup>
+          // <FormLabel component="legend">By Artist or by Album</FormLabel>
+          // <RadioGroup
+            // aria-label="By Artist or By Album"
+            // name="byAlbumOrByArtist"
+            // value={this.state.byAlbumOrByArtist}
+            // onChange={(e) => this.changeByAlbumOrByArtist(e)}
+          // >
+            // <FormControlLabel value="byAlbum" control={<Radio />} label="By Album" />
+            // <FormControlLabel value="byArtist" control={<Radio />} label="By Artist" />
+          // </RadioGroup>
+          // </FormGroup>
 
