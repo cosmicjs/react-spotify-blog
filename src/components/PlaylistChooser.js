@@ -149,7 +149,7 @@ render() {
           </FormGroup>
         </FormControl>
         </div>
-        <button onClick={(e) => {SpotifyFunctions.byAlbumNoDiscography(this.state.chosenPlaylistId)}}>Play Now</button>
+        <button onClick={(e) => {SpotifyFunctions.byAlbumNoDiscographyRedo(this.state)}}>Play Now</button>
       </div>
     )
   }
