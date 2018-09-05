@@ -5,6 +5,7 @@
   "dependencies": {
     "@material-ui/core": "^3.0.1",
     "cosmicjs": "^3.2.12",
+    "lodash.chunk": "^4.2.0",
     "lodash.flatten": "^4.4.0",
     "lodash.startcase": "^4.4.0",
     "lodash.uniq": "^4.5.0",

@@ -2,6 +2,7 @@ import Spotify from 'spotify-web-api-js';
 import startCase from 'lodash.startcase';
 import uniq from 'lodash.uniq';
 import flatten from 'lodash.flatten';
+import chunk from 'lodash.chunk';
 
 export function redirectUrlToSpotifyForLogin(){
 	var CLIENT_ID = process.env.REACT_APP_SPOTIFY_CLIENT_ID;
@@ -118,6 +119,7 @@ export async function getSimpleAlbumTracks(albumId, albumName, albumUri){
 				artistUri: artist.uri,
 			}
 		})
+		console.log(`simpleTracks from ${albumName}`,simpleTracks);
 		return simpleTracks
 	}
 	catch(err) {
@@ -140,10 +142,27 @@ async function createPlaylist(simplifiedTrackArray, playlistName, addRelatedDisc
 	const trackUris = simplifiedTrackArray.map((trackObject) => {
 		return trackObject.trackUri
 	})
-	const addTracksToPlaylistResponse = await spotifyApi.addTracksToPlaylist(newPlaylistResponse.id, trackUris);
-	//finally play the new playlist!
-	await spotifyApi.play({context_uri: newPlaylistResponse.uri});
-	return {id: newPlaylistResponse.id, uri: newPlaylistResponse.uri, url: newPlaylistResponse.external_urls.spotify}
+	//spotify will only  let you add 100 tracks per addTracksToPlaylist request, so need to split the trackUris up
+	//if more than 100 tracks
+	const maxTracksToAddInEachRequest = 100;
+
+	if (trackUris.length <maxTracksToAddInEachRequest) {
+		const addTracksToPlaylistResponse = await spotifyApi.addTracksToPlaylist(newPlaylistResponse.id, trackUris);
+		//finally play the new playlist!
+		await spotifyApi.play({context_uri: newPlaylistResponse.uri});
+		return {id: newPlaylistResponse.id, uri: newPlaylistResponse.uri, url: newPlaylistResponse.external_urls.spotify}
+	}
+	else {
+		const chunkedTrackUris = chunk(trackUris, maxTracksToAddInEachRequest);
+		const promisesOfChunkedUris = chunkedTrackUris.map(async (chunkOfTrackUris) => {
+			const addTracksToPlaylistResponse = await spotifyApi.addTracksToPlaylist(newPlaylistResponse.id, chunkOfTrackUris);
+		})
+		const done = await Promise.all(promisesOfChunkedUris);
+		//finally play the new playlist!
+		await spotifyApi.play({context_uri: newPlaylistResponse.uri});
+		return {id: newPlaylistResponse.id, uri: newPlaylistResponse.uri, url: newPlaylistResponse.external_urls.spotify}
+		
+	}
 }
 
 function identifyAlbumsInPlaylist(simplifiedPlaylist, returnSimpleArray=true) {
@@ -247,6 +266,7 @@ function shuffleArray(input) {
 
 
 
+
 //identifyAlbumsInPlaylist - done
 //playPlaylist - need to build off of .play method with playlist URI
 //getPlaylistTracks - built in, but modifying with wrapper function to simplyify
@@ -280,16 +300,13 @@ export async function byAlbumWithDiscography(state){
 		let tracks = await getSimplePlaylistTracks(playlistId);
 		const albumIds = identifyAlbumsInPlaylist(tracks, false);
 		const shuffledAlbums = shuffleArray(albumIds); 
-		console.log("albumIds from byAlbumWithDiscography",albumIds);
 		//forget the playlist now that we know the albums - start fresh
-		const tracksFromAlbum = Promise.all(shuffledAlbums.map(async (albumObject) => {
-			return await getSimpleAlbumTracks(albumObject.albumId, albumObject.albumName, albumObject.albumUri)
-		}))
-		// await Promise.all(tracksFromAlbum);
-		const playlistObject = convertPlaylistToObjectByProperty(tracksFromAlbum, 'albumId');
-		let tracksByAlbum = albumIds.map((albumId) => {
-			return playlistObject[albumId]
-		});
+		const promiseArrayOfTracksFromAlbum = shuffledAlbums.map(async (albumObject) => {
+			const response = await getSimpleAlbumTracks(albumObject.albumId, albumObject.albumName, albumObject.albumUri)
+			return response
+		})
+		const tracksByAlbum = await Promise.all(promiseArrayOfTracksFromAlbum);
+		console.log("tracksByAlbum after await",tracksByAlbum);
 		const sortedByAlbumAndTrack = flatten(tracksByAlbum);
 		console.log("sortedByAlbumAndTrack from withDiscography",sortedByAlbumAndTrack);
 		const newPlaylist = await createPlaylist(sortedByAlbumAndTrack, playlistName, addRelatedDiscography);
