@@ -8,7 +8,7 @@ class Author extends Component {
     return (
       <div className="Author">
       	<Avatar alt={this.props.authorName} src={this.props.avatarImageSrc} />
-        <p>{this.props.authorName}</p>
+        <p>by {this.props.authorName}</p>
       </div>
     );
   }

@@ -60,6 +60,8 @@ class PlaylistChooser extends Component {
   }
 
   handlePlaylistChooserTopLevelClick(e) {
+    console.log("e.currentTarget from handlePlaylistChooserTopLevelClick",e.currentTarget);
+    console.log("e.target from handlePlaylistChooserTopLevelClick",e.target);
     this.setState({anchorElement: e.currentTarget})
   }
 
@@ -129,8 +131,8 @@ render() {
           </FormGroup>
         </FormControl>
         </div>
-        <button onClick={(e) => {this.state.addRelatedDiscography === "false" ? SpotifyFunctions.byAlbumNoDiscography(this.state) : SpotifyFunctions.byAlbumWithDiscography(this.state)}}>Play Now</button>
-        <p className="checkYourPlaylistsAlert">You have to have spotify open to start playback. If Spotify can't find an active device it will create a new playlist you can access later</p>
+        <button className="playNowButton" onClick={(e) => {this.state.addRelatedDiscography === "false" ? SpotifyFunctions.byAlbumNoDiscography(this.state) : SpotifyFunctions.byAlbumWithDiscography(this.state)}}>Play Now</button>
+        <p className="checkYourPlaylistsAlert">You have to have Spotify open to start playback. If Spotify can't find an active device it will create a new playlist you can access later</p>
       </div>
     )
   }
@@ -138,17 +140,4 @@ render() {
 
   
 export default withStyles(styles)(PlaylistChooser);
-
-          // <FormGroup>
-          // <FormLabel component="legend">By Artist or by Album</FormLabel>
-          // <RadioGroup
-            // aria-label="By Artist or By Album"
-            // name="byAlbumOrByArtist"
-            // value={this.state.byAlbumOrByArtist}
-            // onChange={(e) => this.changeByAlbumOrByArtist(e)}
-          // >
-            // <FormControlLabel value="byAlbum" control={<Radio />} label="By Album" />
-            // <FormControlLabel value="byArtist" control={<Radio />} label="By Artist" />
-          // </RadioGroup>
-          // </FormGroup>
 

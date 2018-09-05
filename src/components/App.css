@@ -16,8 +16,6 @@
 
 .App-header {
   grid-column: 1/1;
-  /*background-color: #222;*/
-  /*color: white;*/
 }
 
 .featuredPost {
@@ -43,6 +41,57 @@ grid-row: 2/5;
 
 .App-title {
   font-size: 1.5em;
+}
+
+@media only screen and (max-width: 800px) {
+
+.App {
+  margin: auto;
+  padding-left: 20px;
+  padding-right: 20px;
+  text-align: center;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr 2fr 2fr 1fr;
+  grid-row-gap: 20px;
+  justify-items: stretch;
+  align-items: stretch;
+  height: auto;
+  /*height: 100vh;*/
+  max-width: 1600px;
+  overflow: auto;
+}
+
+.App-header {
+  grid-column: 1/1;
+  grid-row: 1/1;
+}
+
+.featuredPost {
+  grid-column: 1/1;
+  grid-row: 2/3;
+
+}
+
+.spotifyPlayer {
+grid-column: 1/1;
+grid-row: 3/4;
+}
+
+.otherPosts {
+  grid-column: 1/1;
+  grid-row-start: 4/5;
+}
+
+.footer {
+  grid-column: 1/1;
+  grid-row-start: 5/6;
+}
+
+.App-title {
+  font-size: 1.5em;
+}
+
 }
 
 

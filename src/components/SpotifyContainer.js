@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './SpotifyContainer.css';
+import Paper from '@material-ui/core/Paper';
 import ConnectSpotify from './ConnectSpotify';
 import PlaylistChooser from './PlaylistChooser';
 
@@ -32,8 +33,10 @@ class SpotifyContainer extends Component {
   render() {
     return (
       <div className="SpotifyContainer">
+      <Paper>
         <p>Spotify Controls</p>
         {!this.state.loggedInToSpotify ? <ConnectSpotify /> : <PlaylistChooser accessToken={this.state.accessToken}/> }
+        </Paper>
       </div>
     );
   }

@@ -6,9 +6,16 @@
 	max-width:800px; 
 	display: flex;
 	flex-direction: column;
+	align-content: space-around;
+	justify-content: space-around;
 }
 
 ul {
 	max-height: 500px;
 	overflow: auto;
+}
+
+.playNowButton {
+	max-width: 75%;
+	align-self: center;
 }
