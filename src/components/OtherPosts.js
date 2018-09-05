@@ -17,7 +17,6 @@ class OtherPosts extends Component {
   }
 
   render() {
-      console.log("this.props.otherPosts from OtherPosts",this.props.otherPosts);
     return (
       <div className="OtherPosts">
       <ExpansionPanel>

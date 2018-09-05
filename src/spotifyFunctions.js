@@ -92,6 +92,7 @@ export async function getSimplePlaylistTracks(playlistId){
 				artistUri: artist.uri,
 			}
 		})
+		console.log("simpleTracks ",simpleTracks);
 		return simpleTracks
 	}
 	catch(err) {
@@ -119,7 +120,6 @@ export async function getSimpleAlbumTracks(albumId, albumName, albumUri){
 				artistUri: artist.uri,
 			}
 		})
-		console.log(`simpleTracks from ${albumName}`,simpleTracks);
 		return simpleTracks
 	}
 	catch(err) {
@@ -174,11 +174,26 @@ function identifyAlbumsInPlaylist(simplifiedPlaylist, returnSimpleArray=true) {
 			return ({albumId: track.albumId, albumName: track.albumName, albumUri: track.albumUri})
 		}
 	})
-
 	albumIds = uniq(albumIds);
 	albumIds = shuffleArray(albumIds);
 	return albumIds;
+}
 
+async function identifyAlbumsByArtistId(artistId, returnSimpleArray=true) {
+	//returns an array of albumIds that appear in the playlist, without duplicates
+	const arrayOfAlbumObjects = await spotifyApi.getArtistAlbums(artistId)
+	console.log("arrayOfAlbumObjects.items from identifyAlbumsByArtistId",arrayOfAlbumObjects.items);
+	let albumIds = arrayOfAlbumObjects.items.map((albumObj) => {
+		if (returnSimpleArray) {
+			return albumObj.id
+		} else {
+			return ({albumId: albumObj.id, albumName: albumObj.name, albumUri: albumObj.uri})
+		}
+	})
+	albumIds = uniq(albumIds);
+	albumIds = shuffleArray(albumIds);
+	console.log("albumIds from identifyAlbumsByArtistId",albumIds);
+	return albumIds;
 }
 
 function convertPlaylistToObjectByProperty(simplifiedPlaylist, propertyName){
@@ -196,31 +211,6 @@ function convertPlaylistToObjectByProperty(simplifiedPlaylist, propertyName){
 	}
 	return playlistObject
 }
-
-// function albumSorterHelper(a, b){
-// 	const first = a.albumName.toLowerCase();
-// 	const second = b.albumName.toLowerCase();
-// 	const comparison = first >= second ? 1 : -1;
-// 	return comparison
-// }
-
-// function trackNumberSorterHelper(a, b){
-// 	//sorts tracks by the order they are played on the album, should be run
-// 	//after sorting by album
-// 	//if albums are different, don't adjust order (return 0)
-// 	if (a.albumName !== b.albumName) {
-// 		return 0
-// 	}
-// 	const comparison = a.trackName >= b.trackName ? 1 : -1;
-// 	return comparison
-// }
-
-// function artistSorterHelper(a, b){
-// 	const first = a.artistName.toLowerCase();
-// 	const second = b.artistName.toLowerCase();
-// 	const comparison = first >= second ? 1 : -1;
-// 	return comparison
-// }
 
 function dynamicSort(property) {
     var sortOrder = 1;
@@ -264,17 +254,8 @@ function shuffleArray(input) {
     return input;
 }
 
-
-
-
-//identifyAlbumsInPlaylist - done
-//playPlaylist - need to build off of .play method with playlist URI
-//getPlaylistTracks - built in, but modifying with wrapper function to simplyify
-//createPlaylist - built in, but modifying with wrapper function to be able to just pass it my simpler playlist arrays
-//getTracksForAlbum - built in
-
-
 export async function byAlbumNoDiscography(state){
+	console.log('byAlbumNoDiscography called');
 	//receives this.state from playlistChooser and extract what you need
 	const {chosenPlaylistId: playlistId, chosenPlaylistName:playlistName, addRelatedDiscography} = state;
 	try {
@@ -294,6 +275,7 @@ export async function byAlbumNoDiscography(state){
 }
 
 export async function byAlbumWithDiscography(state){
+	console.log('by album with discography called');
 	//receives this.state from playlistChooser and extract what you need
 	const {chosenPlaylistId: playlistId, chosenPlaylistName:playlistName, addRelatedDiscography} = state;
 	try {
@@ -306,13 +288,33 @@ export async function byAlbumWithDiscography(state){
 			return response
 		})
 		const tracksByAlbum = await Promise.all(promiseArrayOfTracksFromAlbum);
-		console.log("tracksByAlbum after await",tracksByAlbum);
 		const sortedByAlbumAndTrack = flatten(tracksByAlbum);
-		console.log("sortedByAlbumAndTrack from withDiscography",sortedByAlbumAndTrack);
 		const newPlaylist = await createPlaylist(sortedByAlbumAndTrack, playlistName, addRelatedDiscography);
 	}
 	catch(err) {
 		console.error('Error: in byAlbumWithDiscography in spotifyFunctions', err);
+		console.error(err.stack);
+	}
+}
+
+export async function playArtistDiscography(artistId, artistName){
+	console.log('byAlbumNoDiscography called');
+	//receives this.state from playlistChooser and extract what you need
+	try {
+		const albumIds = await identifyAlbumsByArtistId(artistId, false);
+		const shuffledAlbums = shuffleArray(albumIds); 
+		const promiseArrayOfTracksFromAlbum = shuffledAlbums.map(async (albumObject) => {
+			const response = await getSimpleAlbumTracks(albumObject.albumId, albumObject.albumName, albumObject.albumUri)
+			return response
+		})
+		const tracksByAlbum = await Promise.all(promiseArrayOfTracksFromAlbum);
+		console.log("tracksByAlbum from playArtistDiscography",tracksByAlbum);
+		const sortedByAlbumAndTrack = flatten(tracksByAlbum);
+		const newPlaylist = await createPlaylist(sortedByAlbumAndTrack, `${artistName} Discography`, "false");
+	}
+	catch(err) {
+		console.error('Error: in playArtistDiscography in spotifyFunctions', err);
+		console.error(err);
 		console.error(err.stack);
 	}
 }

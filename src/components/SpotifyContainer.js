@@ -30,7 +30,6 @@ class SpotifyContainer extends Component {
 	}
 
   render() {
-  	console.log("SpotifyFunctions.getUserPlaylists() ''",SpotifyFunctions.getUserPlaylists());
     return (
       <div className="SpotifyContainer">
         <p>Spotify Controls</p>
