@@ -6,7 +6,7 @@ import FeaturedPost from './FeaturedPost';
 import OtherPosts from './OtherPosts';
 import SpotifyContainer from './SpotifyContainer';
 import Footer from './Footer';
-import * as Helpers from '../helpers';
+import * as CosmicFunctions from '../cosmicFunctions';
 
 
 class App extends Component {
@@ -24,23 +24,23 @@ class App extends Component {
 
   async componentDidMount(){
     try {
-      const {posts, authors} = await Helpers.getCosmicJsData();
+      const {posts, authors} = await CosmicFunctions.getCosmicJsData();
       this.setState({dataReceived: true, posts: posts, authors: authors, otherPosts: posts.slice(1)})
     }
     catch(err) {
-      console.error('Error: Problem retrieving Cosmic JS data', err);
+      console.error('Error: Problem retrieving Cosmic JS data');
+      console.error(err);
       console.error(err.stack);
       this.setState({dataReceived: false});
     }
   }
 
   changeFeaturedPost(index) {
-    this.setState({featuredPostIndex: index})
+    // this.setState({featuredPostIndex: index})
     //make copy of posts so don't mutate
     let copyOfPosts = this.state.posts.slice();
     copyOfPosts.splice(index, 1);
-    // otherPosts.splice(index,1);
-    this.setState({otherPosts: copyOfPosts});
+    this.setState({featuredPostIndex: index, otherPosts: copyOfPosts});
   }
 
 

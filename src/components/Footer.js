@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import './Footer.css';
 import Typography from '@material-ui/core/Typography';
-// import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 class Footer extends Component {
   render() {

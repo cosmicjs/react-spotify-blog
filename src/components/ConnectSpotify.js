@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import './ConnectSpotify.css';
 import * as SpotifyFunctions from '../spotifyFunctions.js'
-// import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 class ConnectSpotify extends Component {
 

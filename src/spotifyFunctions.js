@@ -1,5 +1,4 @@
 import Spotify from 'spotify-web-api-js';
-import startCase from 'lodash.startcase';
 import uniq from 'lodash.uniq';
 import flatten from 'lodash.flatten';
 import chunk from 'lodash.chunk';
@@ -21,7 +20,6 @@ export function redirectUrlToSpotifyForLogin(){
 }
 
 const spotifyApi = new Spotify();
-// spotifyApi.setPromiseImplementation(Promise);
 
 export function checkUrlForSpotifyAccessToken(){
 	const params = getHashParams();
@@ -34,30 +32,19 @@ export function checkUrlForSpotifyAccessToken(){
 	}
 }
 
-function getHashParams() {
-  var hashParams = {};
-  var e, r = /([^&;=]+)=?([^&;]*)/g,
-      q = window.location.hash.substring(1);
-      // eslint-disable-next-line
-  while ( e = r.exec(q)) {
-     hashParams[e[1]] = decodeURIComponent(e[2]);
-  }
-  return hashParams;
-}
-
 export function setAccessToken(accessToken) {
+	//since using spotifyApi as helper library you can set the access code once 
+	//you get it and then not have to include it in every request
 	spotifyApi.setAccessToken(accessToken);
 }
 
 export async function getUserPlaylists() {
 	//returns an array of objects with playlist name (like "Favorite Smashing Pumpkins jamz")
 	//and the id of the playlist. Use this to feed the playlists selection list 
-
 	try {
 		const playlistsResponse = await spotifyApi.getUserPlaylists();
-		//items are the actual playlist objects
-		const {items} = playlistsResponse;
-		const playlists = items.map((playlistObject) => {
+		//playlistsResponse.items are the actual playlist objects
+		const playlists = playlistsResponse.items.map((playlistObject) => {
 			const {id, name} = playlistObject;
 			return {id: id, playlistName: name}
 		})
@@ -71,10 +58,12 @@ export async function getUserPlaylists() {
 	}
 }
 
-export async function getSimplePlaylistTracks(playlistId){
+async function getSimplePlaylistTracks(playlistId){
 	//track_number is what track number a song is on the album
 	try {
 		const tracks = await spotifyApi.getPlaylistTracks(playlistId);
+		//getPlaylistTracks has a bunch of meta data about the playlist we don't need
+		//once again items is the property we really want. It's an array of tracks
 		const simpleTracks = tracks.items.map((trackObject) => {
 			const track = trackObject.track;
 			const album = trackObject.track.album;
@@ -92,7 +81,6 @@ export async function getSimplePlaylistTracks(playlistId){
 				artistUri: artist.uri,
 			}
 		})
-		console.log("simpleTracks ",simpleTracks);
 		return simpleTracks
 	}
 	catch(err) {
@@ -101,7 +89,7 @@ export async function getSimplePlaylistTracks(playlistId){
 	}
 }
 
-export async function getSimpleAlbumTracks(albumId, albumName, albumUri){
+async function getSimpleAlbumTracks(albumId, albumName, albumUri){
 	//track_number is what track number a song is on the album
 	try {
 		const tracks = await spotifyApi.getAlbumTracks(albumId);
@@ -130,38 +118,38 @@ export async function getSimpleAlbumTracks(albumId, albumName, albumUri){
 
 async function createPlaylist(simplifiedTrackArray, playlistName, addRelatedDiscography) {
 	//have to get userId, create a playlist in spotify with the name, and then add the tracks to it
-	//options is whether to addDiscography and by artist or by album
-	//return object with playlist id and playlist urifor the new playlist
-	const getUserResponse = await spotifyApi.getMe();
+	//options is whether to addDiscography 
+	//Note that Spotify is very picky about what counts as an 'active device' so likely don't have permission to press
+	//play. Also only works if the user has premium. Also spotify will only let you add 100 tracks 
+	//per addTracksToPlaylist request, so need to split the trackUris up if more than 100 tracks
+
+	const maxTracksToAddInEachRequest = 100;
+	const userInfoResponse = await spotifyApi.getMe();
 	const name = `${playlistName} - Album Shuffled - ${addRelatedDiscography === "true" ? 'with related discography' : ''}`;
 	const description = 'Made with the oldschoolshuffle app to enable shuffling by album, the way music was meant to be listened to';
 	//es6 destructuring and renaming
-	const {id: userId} = getUserResponse;
+	const {id: userId} = userInfoResponse;
 	const playlistOptions = {name: name, description: description}
 	const newPlaylistResponse = await spotifyApi.createPlaylist(userId, playlistOptions);
 	const trackUris = simplifiedTrackArray.map((trackObject) => {
 		return trackObject.trackUri
 	})
-	//spotify will only  let you add 100 tracks per addTracksToPlaylist request, so need to split the trackUris up
-	//if more than 100 tracks
-	const maxTracksToAddInEachRequest = 100;
 
-	if (trackUris.length <maxTracksToAddInEachRequest) {
-		const addTracksToPlaylistResponse = await spotifyApi.addTracksToPlaylist(newPlaylistResponse.id, trackUris);
-		//finally play the new playlist!
-		await spotifyApi.play({context_uri: newPlaylistResponse.uri});
-		return {id: newPlaylistResponse.id, uri: newPlaylistResponse.uri, url: newPlaylistResponse.external_urls.spotify}
-	}
-	else {
-		const chunkedTrackUris = chunk(trackUris, maxTracksToAddInEachRequest);
-		const promisesOfChunkedUris = chunkedTrackUris.map(async (chunkOfTrackUris) => {
-			const addTracksToPlaylistResponse = await spotifyApi.addTracksToPlaylist(newPlaylistResponse.id, chunkOfTrackUris);
-		})
-		const done = await Promise.all(promisesOfChunkedUris);
-		//finally play the new playlist!
-		await spotifyApi.play({context_uri: newPlaylistResponse.uri});
-		return {id: newPlaylistResponse.id, uri: newPlaylistResponse.uri, url: newPlaylistResponse.external_urls.spotify}
-		
+	try {
+		if (trackUris.length <maxTracksToAddInEachRequest) {
+			return await spotifyApi.addTracksToPlaylist(newPlaylistResponse.id, trackUris);
+		} 
+		else {
+			const chunkedTrackUris = chunk(trackUris, maxTracksToAddInEachRequest);
+			const promisesOfChunkedUris = chunkedTrackUris.map(async (chunkOfTrackUris) => {
+				//eslint-disable-next-line
+				const addTracksToPlaylistResponse = await spotifyApi.addTracksToPlaylist(newPlaylistResponse.id, chunkOfTrackUris);
+			})
+			await Promise.all(promisesOfChunkedUris);
+			return await spotifyApi.play({context_uri: newPlaylistResponse.uri});
+		}
+	} catch(err) {
+		console.log('Oops - no spotify player is active so just made a playlist');
 	}
 }
 
@@ -182,7 +170,6 @@ function identifyAlbumsInPlaylist(simplifiedPlaylist, returnSimpleArray=true) {
 async function identifyAlbumsByArtistId(artistId, returnSimpleArray=true) {
 	//returns an array of albumIds that appear in the playlist, without duplicates
 	const arrayOfAlbumObjects = await spotifyApi.getArtistAlbums(artistId)
-	console.log("arrayOfAlbumObjects.items from identifyAlbumsByArtistId",arrayOfAlbumObjects.items);
 	let albumIds = arrayOfAlbumObjects.items.map((albumObj) => {
 		if (returnSimpleArray) {
 			return albumObj.id
@@ -192,14 +179,15 @@ async function identifyAlbumsByArtistId(artistId, returnSimpleArray=true) {
 	})
 	albumIds = uniq(albumIds);
 	albumIds = shuffleArray(albumIds);
-	console.log("albumIds from identifyAlbumsByArtistId",albumIds);
 	return albumIds;
 }
 
 function convertPlaylistToObjectByProperty(simplifiedPlaylist, propertyName){
-	//use to group large array of tracks into smaller arrays of tracks from same album or artist
-	//also sorts related tracks within a property by trackName
+	//use to group large array of tracks into smaller arrays of tracks from same album
+	//this lets us easily sort tracks for a single album, then do a for..in loop
+	//over each albumId as an object key and combine the arrays back together 
 	let playlistObject = {};
+	//eslint-disable-next-line
 	simplifiedPlaylist.map((track) => {
 		if (!playlistObject[track[propertyName]]) {
 			playlistObject[track[propertyName]] = [];
@@ -224,26 +212,6 @@ function dynamicSort(property) {
     }
 }
 
-function dynamicSortMultiple() {
-    /*
-     * save the arguments object as it will be overwritten
-     * note that arguments object is an array-like object
-     * consisting of the names of the properties to sort by
-     */
-    var props = arguments;
-    return function (obj1, obj2) {
-        var i = 0, result = 0, numberOfProperties = props.length;
-        /* try getting a different result from 0 (equal)
-         * as long as we have extra properties to compare
-         */
-        while(result === 0 && i < numberOfProperties) {
-            result = dynamicSort(props[i])(obj1, obj2);
-            i++;
-        }
-        return result;
-    }
-}
-
 function shuffleArray(input) {
     for (let i = input.length-1; i >=0; i--) {
         const randomIndex = Math.floor(Math.random()*(i+1)); 
@@ -254,8 +222,19 @@ function shuffleArray(input) {
     return input;
 }
 
+function getHashParams() {
+  //helper function to parse the query string that spotify sends back when you log in
+  var hashParams = {};
+  var e, r = /([^&;=]+)=?([^&;]*)/g,
+      q = window.location.hash.substring(1);
+      // eslint-disable-next-line
+  while ( e = r.exec(q)) {
+     hashParams[e[1]] = decodeURIComponent(e[2]);
+  }
+  return hashParams;
+}
+
 export async function byAlbumNoDiscography(state){
-	console.log('byAlbumNoDiscography called');
 	//receives this.state from playlistChooser and extract what you need
 	const {chosenPlaylistId: playlistId, chosenPlaylistName:playlistName, addRelatedDiscography} = state;
 	try {
@@ -266,7 +245,7 @@ export async function byAlbumNoDiscography(state){
 			return playlistObject[albumId]
 		});
 		const sortedByAlbumAndTrack = flatten(tracksByAlbum);
-		const newPlaylist = await createPlaylist(sortedByAlbumAndTrack, playlistName, addRelatedDiscography);
+		await createPlaylist(sortedByAlbumAndTrack, playlistName, addRelatedDiscography);
 	}
 	catch(err) {
 		console.error('Error: in byAlbumNoDiscography in spotifyFunctions', err);
@@ -275,7 +254,6 @@ export async function byAlbumNoDiscography(state){
 }
 
 export async function byAlbumWithDiscography(state){
-	console.log('by album with discography called');
 	//receives this.state from playlistChooser and extract what you need
 	const {chosenPlaylistId: playlistId, chosenPlaylistName:playlistName, addRelatedDiscography} = state;
 	try {
@@ -289,7 +267,7 @@ export async function byAlbumWithDiscography(state){
 		})
 		const tracksByAlbum = await Promise.all(promiseArrayOfTracksFromAlbum);
 		const sortedByAlbumAndTrack = flatten(tracksByAlbum);
-		const newPlaylist = await createPlaylist(sortedByAlbumAndTrack, playlistName, addRelatedDiscography);
+		await createPlaylist(sortedByAlbumAndTrack, playlistName, addRelatedDiscography);
 	}
 	catch(err) {
 		console.error('Error: in byAlbumWithDiscography in spotifyFunctions', err);
@@ -298,7 +276,6 @@ export async function byAlbumWithDiscography(state){
 }
 
 export async function playArtistDiscography(artistId, artistName){
-	console.log('byAlbumNoDiscography called');
 	//receives this.state from playlistChooser and extract what you need
 	try {
 		const albumIds = await identifyAlbumsByArtistId(artistId, false);
@@ -308,9 +285,8 @@ export async function playArtistDiscography(artistId, artistName){
 			return response
 		})
 		const tracksByAlbum = await Promise.all(promiseArrayOfTracksFromAlbum);
-		console.log("tracksByAlbum from playArtistDiscography",tracksByAlbum);
 		const sortedByAlbumAndTrack = flatten(tracksByAlbum);
-		const newPlaylist = await createPlaylist(sortedByAlbumAndTrack, `${artistName} Discography`, "false");
+		await createPlaylist(sortedByAlbumAndTrack, `${artistName} Discography`, "false");
 	}
 	catch(err) {
 		console.error('Error: in playArtistDiscography in spotifyFunctions', err);

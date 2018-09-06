@@ -13,7 +13,6 @@ import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 import FormGroup from '@material-ui/core/FormGroup';
 import * as SpotifyFunctions from '../spotifyFunctions.js'
-// import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
   const styles = theme => ({
     root: {
@@ -44,7 +43,7 @@ class PlaylistChooser extends Component {
   constructor(props){
     super(props)
     this.classes = props;
-      this.state = {
+    this.state = {
       addRelatedDiscography: "false",
       playlists: [],
       chosenPlaylistIndex: 0,
@@ -54,14 +53,18 @@ class PlaylistChooser extends Component {
     }
   }
 
+  async componentDidMount() {
+    await SpotifyFunctions.setAccessToken(this.props.accessToken);
+    const playlists = await SpotifyFunctions.getUserPlaylists();
+    this.setState({playlists: playlists});
+  }
+
   changeAddRelatedDiscography(e){
     e.preventDefault()
     this.setState({addRelatedDiscography: e.target.value})
   }
 
   handlePlaylistChooserTopLevelClick(e) {
-    console.log("e.currentTarget from handlePlaylistChooserTopLevelClick",e.currentTarget);
-    console.log("e.target from handlePlaylistChooserTopLevelClick",e.target);
     this.setState({anchorElement: e.currentTarget})
   }
 
@@ -75,12 +78,6 @@ class PlaylistChooser extends Component {
 
   handlePlaylistMenuClose(e){
     this.setState({anchorElement: null})
-  }
-
-  async componentDidMount() {
-    await SpotifyFunctions.setAccessToken(this.props.accessToken);
-    const playlists = await SpotifyFunctions.getUserPlaylists();
-    this.setState({playlists: playlists});
   }
 
   generateListItem(playlistObj) {
