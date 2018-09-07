@@ -7,15 +7,6 @@ import * as SpotifyFunctions from '../spotifyFunctions.js'
 
 class FeaturedPost extends Component {
 
-  returnHtmlStringAsDomElement(htmlString) {
-    //Cosmic JS default content field is an html field
-    return (
-      <div>
-        {htmlString}
-      </div>
-    )
-  }
-
   createMarkup(htmlString){
     return {__html: htmlString}
   }

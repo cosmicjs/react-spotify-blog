@@ -3,6 +3,8 @@ import uniq from 'lodash.uniq';
 import flatten from 'lodash.flatten';
 import chunk from 'lodash.chunk';
 
+const spotifyApi = new Spotify();
+
 export function redirectUrlToSpotifyForLogin(){
 	var CLIENT_ID = process.env.REACT_APP_SPOTIFY_CLIENT_ID;
     var REDIRECT_URI = process.env.REACT_APP_SPOTIFY_REDIRECT_URI;
@@ -19,7 +21,6 @@ export function redirectUrlToSpotifyForLogin(){
       '&response_type=token';
 }
 
-const spotifyApi = new Spotify();
 
 export function checkUrlForSpotifyAccessToken(){
 	const params = getHashParams();
