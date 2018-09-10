@@ -5,7 +5,6 @@ import Typography from '@material-ui/core/Typography';
 import FeaturedPost from './FeaturedPost';
 import OtherPosts from './OtherPosts';
 import SpotifyContainer from './SpotifyContainer';
-import Footer from './Footer';
 import * as CosmicFunctions from '../cosmicFunctions';
 
 
@@ -64,7 +63,7 @@ class App extends Component {
           <OtherPosts allPosts={this.state.posts} otherPosts={this.state.otherPosts} changeFeaturedPost={(index) => this.changeFeaturedPost(index)}/>
         </div>
         <div className="footer">
-          <Footer />
+          <Typography variant="body2" gutterBottom>Proudly made with Cosmic JS</Typography>
         </div>
       </div>
     );
