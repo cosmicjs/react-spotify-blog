@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import './PlaylistChooser.css';
-import { withStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -13,29 +12,6 @@ import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 import FormGroup from '@material-ui/core/FormGroup';
 import * as SpotifyFunctions from '../spotifyFunctions.js'
-
-  const styles = theme => ({
-    root: {
-      width: '100%',
-      maxWidth: 360,
-      backgroundColor: theme.palette.background.paper,
-      position: 'relative',
-    },
-    playlistViewer: {
-      height: "200px",
-      overflow: "auto",
-      flex: "2 1 auto",
-      backgroundColor: 'inherit',
-    },
-    optionsSelection: {
-      flex: "1 1 auto",
-      backgroundColor: 'inherit',
-      padding: 0,
-      display: "flex",
-      flexWrap: 'wrap',
-      justifyContent: 'flex-start'
-    },
-  });
 
 
 class PlaylistChooser extends Component {
@@ -98,7 +74,7 @@ class PlaylistChooser extends Component {
 
 render() {
     return (
-      <div className={`PlaylistChooser ${this.classes}`}>
+      <div className='PlaylistChooser'>
         <List className={this.classes.playlistViewer}>
           <ListItem button onClick={(e) => this.handlePlaylistChooserTopLevelClick(e)}>
             <ListItemText primary="Choose a playlist to shuffle" secondary={this.state.chosenPlaylistName} />
@@ -112,7 +88,7 @@ render() {
         >
           {this.state.playlists.map((playlistObj, index) => {return this.generateMenuItem(playlistObj, index)})}
         </Menu>
-        <div className={this.classes.optionsSelection}>
+        <div className='optionsSelection'>
         <FormControl component="fieldset" className={this.classes.optionsSelection}>
           <FormGroup>
           <FormLabel component="legend">Add Related Discography</FormLabel>
@@ -136,5 +112,5 @@ render() {
 }
 
   
-export default withStyles(styles)(PlaylistChooser);
+export default PlaylistChooser;
 
