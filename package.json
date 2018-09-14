@@ -22,7 +22,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "productionStart": "npm run build && node productionServer.js"
+    "productionstart": "npm run build && node prodserver.js"
   },
   "license": "MIT"
 }
