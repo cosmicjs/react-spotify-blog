@@ -335,13 +335,18 @@ async function createPlaylist(
 	//es6 destructuring and renaming
 	const { id: userId } = userInfoResponse;
 	const playlistOptions = { name: name, description: description };
+	console.log("playlistOptions ", playlistOptions);
+	console.log("userId ", userId);
 	const newPlaylistResponse = await spotifyApi.createPlaylist(
 		userId,
 		playlistOptions
 	);
+	console.log("newPlaylistResponse from createPlaylist", newPlaylistResponse);
 	const trackUris = simplifiedTrackArray.map((trackObject) => {
 		return trackObject.trackUri;
 	});
+
+	console.log("trackUris to send to make playlist", trackUris);
 
 	try {
 		if (trackUris.length < maxTracksToAddInEachRequest) {
