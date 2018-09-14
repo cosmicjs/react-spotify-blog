@@ -1,1 +1,1 @@
-web: npm run productionstart
+web: bin/boot
