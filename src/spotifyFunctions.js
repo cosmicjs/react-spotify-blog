@@ -5,6 +5,13 @@ import chunk from "lodash.chunk";
 
 const spotifyApi = new Spotify();
 
+//waiting for the API to be fixed so can't use spotify-web-api-js library
+//for playlist stuff. Creating this global variable to hold the accessToken
+//and use it manually for our temporary playlist function. Once the JMPerez library
+//is fixed then can go back to just using it.
+//Playlist API issues: https://developer.spotify.com/community/news/2018/06/12/changes-to-playlist-uris/
+let globalAccessToken = "";
+
 export function redirectUrlToSpotifyForLogin() {
 	const CLIENT_ID = process.env.REACT_APP_SPOTIFY_CLIENT_ID;
 	const REDIRECT_URI =
@@ -57,6 +64,7 @@ export function setAccessToken(accessToken) {
 	//since using spotifyApi as helper library you can set the access code once
 	//you get it and then not have to include it in every request
 	spotifyApi.setAccessToken(accessToken);
+	globalAccessToken = accessToken;
 }
 
 export async function getUserPlaylists() {
@@ -314,11 +322,7 @@ export async function playArtistDiscography(artistId, artistName) {
 	}
 }
 
-async function createPlaylist(
-	simplifiedTrackArray,
-	playlistName,
-	addRelatedDiscography
-) {
+async function createPlaylist(simplifiedTrackArray,	playlistName, addRelatedDiscography) {
 	//have to get userId, create a playlist in spotify with the name, and then add the tracks to it
 	//options is whether to addDiscography
 	//Note that Spotify is very picky about what counts as an 'active device' so likely don't have permission to press
@@ -335,19 +339,18 @@ async function createPlaylist(
 	//es6 destructuring and renaming
 	const { id: userId } = userInfoResponse;
 	const playlistOptions = { name: name, description: description };
-	console.log("playlistOptions ", playlistOptions);
-	console.log("userId ", userId);
-	const newPlaylistResponse = await spotifyApi.createPlaylist(
+	const newPlaylistResponse = await tempCreatePlaylist(
 		userId,
 		playlistOptions
 	);
+	//const newPlaylistResponse = await spotifyApi.createPlaylist(
+	// 	userId,
+	// 	playlistOptions
+	// );
 	console.log("newPlaylistResponse from createPlaylist", newPlaylistResponse);
 	const trackUris = simplifiedTrackArray.map((trackObject) => {
 		return trackObject.trackUri;
 	});
-
-	console.log("trackUris to send to make playlist", trackUris);
-
 	try {
 		if (trackUris.length < maxTracksToAddInEachRequest) {
 			return await spotifyApi.addTracksToPlaylist(
@@ -377,5 +380,29 @@ async function createPlaylist(
 		console.log(
 			"Oops - no spotify player is active so just made a playlist"
 		);
+	}
+}
+
+async function tempCreatePlaylist(userId, playlistOptions) {
+	const url = `https://api.spotify.com/v1/users/${userId}/playlists`;
+	const payload = {
+		name: playlistOptions.name,
+		description: playlistOptions.description
+	};
+
+	try {
+		const response = await fetch(url, {
+			method: "POST",
+			body: JSON.stringify(payload),
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: "Bearer" + globalAccessToken
+			}
+		});
+		return response;
+	} catch (err) {
+		console.error("Error: Issue in tempCreatePlaylist");
+		console.error(err);
+		console.error(err.stack);
 	}
 }
