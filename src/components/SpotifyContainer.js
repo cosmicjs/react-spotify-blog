@@ -25,10 +25,9 @@ class SpotifyContainer extends Component {
   render() {
     return (
       <div className="SpotifyContainer">
-      <Paper>
-        <p>Spotify Controls</p>
-        {!this.state.loggedInToSpotify ? <ConnectSpotify /> : <PlaylistChooser accessToken={this.state.accessToken}/> }
-        </Paper>
+      	<Paper>
+      	  {!this.state.loggedInToSpotify ? <ConnectSpotify /> : <PlaylistChooser accessToken={this.state.accessToken}/> }
+      	</Paper>
       </div>
     );
   }

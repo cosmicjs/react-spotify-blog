@@ -15,7 +15,7 @@ class FeaturedPost extends Component {
     return (
       <div className="FeaturedPost">
       <Paper>
-      	<Typography variant="headline" component="h3">
+      	<Typography variant="display1" component="h3">
       		{this.props.post.title}
       	</Typography>
         <Author authorName={this.props.post.metadata.author.title} avatarImageSrc={this.props.post.metadata.author.metadata.avatarimage.url}/>

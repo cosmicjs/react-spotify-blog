@@ -13,7 +13,12 @@
     position: 'relative'
 }
 
+.PlaylistChooser h1 {
+	padding-top: 25px;
+}
+
 ul {
+	align-self: center;
 	max-height: 500px;
 	overflow: auto;
 }
@@ -21,12 +26,14 @@ ul {
 .playNowButton {
 	max-width: 75%;
 	align-self: center;
+	padding: 10px 31px;
 }
 
 .optionsSelection: {
   flex: 1 1 auto;
   background-color: 'inherit';
   padding: 0;
+  padding-bottom: 15px;
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-start;
@@ -38,3 +45,4 @@ ul {
   flex: 2 1 auto;
   background-color: inherit;
 }
+

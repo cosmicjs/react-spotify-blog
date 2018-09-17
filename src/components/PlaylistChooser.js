@@ -11,6 +11,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 import FormGroup from '@material-ui/core/FormGroup';
+import Typography from '@material-ui/core/Typography';
 import * as SpotifyFunctions from '../spotifyFunctions.js'
 
 
@@ -75,6 +76,7 @@ class PlaylistChooser extends Component {
 render() {
     return (
       <div className='PlaylistChooser'>
+      <Typography variant="headline">Spotify Controls</Typography>
         <List className={this.classes.playlistViewer}>
           <ListItem button onClick={(e) => this.handlePlaylistChooserTopLevelClick(e)}>
             <ListItemText primary="Choose a playlist to shuffle" secondary={this.state.chosenPlaylistName} />

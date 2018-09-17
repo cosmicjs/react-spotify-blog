@@ -48,7 +48,7 @@ class App extends Component {
       <div className="App">
         <header className="App-header">
           <AppBar>
-            <Typography variant="title">
+            <Typography variant="display3">
               Old School Shuffle
             </Typography>
           </AppBar>
