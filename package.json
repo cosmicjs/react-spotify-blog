@@ -19,8 +19,8 @@
     "spotify-web-api-js": "^1.1.1"
   },
   "scripts": {
-    "developmentstart": "react-scripts start",
-    "start": "npm run build && node app.js",
+    "start": "react-scripts start",
+    "productionstart": "npm run build && node app.js",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"

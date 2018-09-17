@@ -347,7 +347,7 @@ async function createPlaylist(simplifiedTrackArray,	playlistName, addRelatedDisc
 	// 	userId,
 	// 	playlistOptions
 	// );
-	console.log("newPlaylistResponse from createPlaylist", newPlaylistResponse);
+
 	const trackUris = simplifiedTrackArray.map((trackObject) => {
 		return trackObject.trackUri;
 	});
@@ -384,25 +384,28 @@ async function createPlaylist(simplifiedTrackArray,	playlistName, addRelatedDisc
 }
 
 async function tempCreatePlaylist(userId, playlistOptions) {
-	const url = `https://api.spotify.com/v1/users/${userId}/playlists`;
+	// old API endpoint
+	//const url = `https://api.spotify.com/v1/users/${userId}/playlists`;
+	//new API endpoint
+	const url = `https://api.spotify.com/v1/me/playlists`;
 	const payload = {
 		name: playlistOptions.name,
 		description: playlistOptions.description
 	};
-
 	try {
 		const response = await fetch(url, {
 			method: "POST",
 			body: JSON.stringify(payload),
 			headers: {
 				"Content-Type": "application/json",
-				Authorization: "Bearer" + globalAccessToken
+				Authorization: "Bearer " + globalAccessToken
 			}
 		});
-		return response;
+		return response.json();
 	} catch (err) {
 		console.error("Error: Issue in tempCreatePlaylist");
 		console.error(err);
 		console.error(err.stack);
 	}
 }
+
