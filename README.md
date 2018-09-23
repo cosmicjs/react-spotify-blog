@@ -28,7 +28,8 @@ rename .env.sample to .env and paste your API keys for Cosmic and from spotify d
 #start development environment
 npm start
 
-#to build production files and stare
+#to build production files and start production server
 npm run productionstart
 
 ```
+## MIT License 
