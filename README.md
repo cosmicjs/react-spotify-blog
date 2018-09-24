@@ -1,7 +1,7 @@
 ## React Spotify Blog
 ![React Spotify Blog Main Screen](https://cosmic-s3.imgix.net/9ceb7510-c00b-11e8-a375-371e38d27ffb-smartmockups_jmgfdt1c.jpg)
 
-React Spotify Blog is a simple example application showcasing how to use Cosmic JS as a simple but powerful
+React Spotify Blog is a simple example application showcasing how to use [Cosmic JS](https://cosmicjs.com) as a simple but powerful
 content management system and how to incorporate 3rd-party APIs like the Spotify API. Authors can write a
 blog-post-like homage to a musical artist and enable a user to listen to their entire discography on Spotify,
 or a user can shuffle their own spotify playlists by album.
